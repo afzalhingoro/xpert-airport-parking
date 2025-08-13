@@ -1,0 +1,2 @@
+Airport,ProductType,ProductName,ProductID,ReferenceNumber,BookingStatus,CustomerName,DepartureDate,ArrivalDate,DepartureTerminal,ArrivalTerminal,DepartureFlightNo,ReturnFlightNo,Regno,Make,Model,CarColor,Passengers,Mobile,ListPrice,AmountPrice,SupplierCost
+Manchester,"Meet and Greet",Saver,3,MAS-4120,Completed,"Joe Beyga","2025-05-26 18:00:00","2025-06-02 07:45:00","Terminal 1","Terminal 1",M7XMPU,M7XMPU,Pf69vot,Bmw,X5,Black,1,07587747714,52.99,0,0

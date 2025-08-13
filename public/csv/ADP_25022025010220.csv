@@ -1,0 +1,2 @@
+Airport,ProductType,ProductName,ProductID,ReferenceNumber,BookingStatus,CustomerName,DepartureDate,ArrivalDate,DepartureTerminal,ArrivalTerminal,DepartureFlightNo,ReturnFlightNo,Regno,Make,Model,CarColor,Passengers,Mobile,ListPrice,AmountPrice,SupplierCost
+Manchester,"Meet and Greet",Saver,3,MAS-4019,Cancelled,"testing bdm","2025-10-15 09:00:00","2025-10-16 09:00:00","Terminal 1","Terminal 1",,,test,test,test,test,,667586945,40.99,0,0

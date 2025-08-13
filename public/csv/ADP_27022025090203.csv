@@ -1,0 +1,2 @@
+Airport,ProductType,ProductName,ProductID,ReferenceNumber,BookingStatus,CustomerName,DepartureDate,ArrivalDate,DepartureTerminal,ArrivalTerminal,DepartureFlightNo,ReturnFlightNo,Regno,Make,Model,CarColor,Passengers,Mobile,ListPrice,AmountPrice,SupplierCost
+Manchester,"Meet and Greet",Saver,3,MAS-4026,Cancelled,"test test","2025-03-21 09:00:00","2025-03-22 09:00:00",TBA,TBA,TBA,TBA,TBA,TBA,TBA,TBA,1,4564564,40.99,0,0

@@ -1,0 +1,2 @@
+Airport,ProductType,ProductName,ProductID,ReferenceNumber,BookingStatus,CustomerName,DepartureDate,ArrivalDate,DepartureTerminal,ArrivalTerminal,DepartureFlightNo,ReturnFlightNo,Regno,Make,Model,CarColor,Passengers,Mobile,ListPrice,AmountPrice,SupplierCost
+Manchester,"Meet and Greet",Saver,3,MAS-4151,Completed,"test test","2025-06-02 09:00:00","2025-06-09 09:00:00","Terminal 1","Terminal 1",,,test,test,test,test,1,135121332,52.99,0,0

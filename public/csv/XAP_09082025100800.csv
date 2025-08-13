@@ -1,0 +1,2 @@
+Airport,ProductType,ProductName,ProductID,ReferenceNumber,BookingStatus,CustomerName,DepartureDate,ArrivalDate,DepartureTerminal,ArrivalTerminal,DepartureFlightNo,ReturnFlightNo,Regno,Make,Model,CarColor,Passengers,Mobile,ListPrice,AmountPrice,SupplierCost
+Stansted,"Park and Ride","Park and Ride Flex",117,XAP-4384,Completed,"Ferdinand Bautista","2025-08-22 08:00:00","2025-08-28 23:30:00","Main Terminal","Main Terminal",FR2425,FR2424,KU17GOY,"NISSAN X-TRAIL",2017,BLACK,1,7475167202,70.99,0,0

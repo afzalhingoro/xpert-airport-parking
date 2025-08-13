@@ -1,0 +1,2 @@
+Airport,ProductType,ProductName,ProductID,ReferenceNumber,BookingStatus,CustomerName,DepartureDate,ArrivalDate,DepartureTerminal,ArrivalTerminal,DepartureFlightNo,ReturnFlightNo,Regno,Make,Model,CarColor,Passengers,Mobile,ListPrice,AmountPrice,SupplierCost
+Manchester,"Meet and Greet",Saver,3,MAS-4036,Completed,"Deandra Kusi","2025-03-06 05:45:00","2025-03-11 21:30:00","Terminal 1","Terminal 1","FR 1730","FR 2691","LD21 ODH",Tesla,"Model 3",Black,1,07538676220,48.99,0,0

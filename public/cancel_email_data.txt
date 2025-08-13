@@ -1,0 +1,52 @@
+Array
+(
+    [username] => Martha Rios
+    [airport] => Stansted
+    [terminal] => Main Terminal
+    [rterminal] => Main Terminal
+    [company] => Park and Ride Summer Special Flex
+    [days] => 7
+    [carpark] => Car Park
+    [c_parent] => Park and Ride Summer Special Flex
+    [email] => Martharios2020@outlook.com
+    [telephone] => 07561885552
+    [booktime] => Illuminate\Support\Carbon Object
+        (
+            [endOfTime:protected] => 
+            [startOfTime:protected] => 
+            [constructedObjectId:protected] => 000000000000087c0000000000000000
+            [localMonthsOverflow:protected] => 
+            [localYearsOverflow:protected] => 
+            [localStrictModeEnabled:protected] => 
+            [localHumanDiffOptions:protected] => 
+            [localToStringFormat:protected] => 
+            [localSerializer:protected] => 
+            [localMacros:protected] => 
+            [localGenericMacros:protected] => 
+            [localFormatFunction:protected] => 
+            [localTranslator:protected] => 
+            [dumpProperties:protected] => Array
+                (
+                    [0] => date
+                    [1] => timezone_type
+                    [2] => timezone
+                )
+
+            [dumpLocale:protected] => 
+            [dumpDateProperties:protected] => 
+            [date] => 2025-07-26 12:19:27.000000
+            [timezone_type] => 3
+            [timezone] => UTC
+        )
+
+    [start_date] => 2025-08-13 12:00:00
+    [end_date] => 2025-08-19 00:45:00
+    [r_flight_no] => 
+    [reg] => Sv63ghb
+    [vehicle] => Sv63ghb
+    [model] => Corsa
+    [color] => Grey
+    [make] => Vauxal
+    [ref] => XAP-4264
+    [refund] => 65.54
+)

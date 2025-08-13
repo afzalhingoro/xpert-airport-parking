@@ -1,0 +1,52 @@
+Array
+(
+    [username] => Laura Bryant
+    [airport] => Stansted
+    [terminal] => Main Terminal
+    [rterminal] => Main Terminal
+    [company] => Park and Ride Summer Special Flex
+    [days] => 5
+    [carpark] => Car Park
+    [c_parent] => Park and Ride Summer Special Flex
+    [email] => laurabryant716@hotmail.com
+    [telephone] => 07961105574
+    [booktime] => Illuminate\Support\Carbon Object
+        (
+            [endOfTime:protected] => 
+            [startOfTime:protected] => 
+            [constructedObjectId:protected] => 00000000000007df0000000000000000
+            [localMonthsOverflow:protected] => 
+            [localYearsOverflow:protected] => 
+            [localStrictModeEnabled:protected] => 
+            [localHumanDiffOptions:protected] => 
+            [localToStringFormat:protected] => 
+            [localSerializer:protected] => 
+            [localMacros:protected] => 
+            [localGenericMacros:protected] => 
+            [localFormatFunction:protected] => 
+            [localTranslator:protected] => 
+            [dumpProperties:protected] => Array
+                (
+                    [0] => date
+                    [1] => timezone_type
+                    [2] => timezone
+                )
+
+            [dumpLocale:protected] => 
+            [dumpDateProperties:protected] => 
+            [date] => 2025-07-23 22:26:21.000000
+            [timezone_type] => 3
+            [timezone] => UTC
+        )
+
+    [start_date] => 2025-08-11 05:00:00
+    [end_date] => 2025-08-15 20:45:00
+    [r_flight_no] => FR5124
+    [reg] => WH23LAU
+    [vehicle] => WH23LAU
+    [model] => Q3
+    [color] => Orange
+    [make] => Audi
+    [ref] => XAP-4214
+    [refund] => 41.99
+)

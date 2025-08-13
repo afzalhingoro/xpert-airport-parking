@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "axiomatic-skill-443614-c4",
+  "private_key_id": "ef834be17f206112aa93655dd2ebb44b1ba6ee93",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCoJGgJOqPmMFle\n4zW6zJv4fexu/SvTeR5qNvShSw631mEi9/WZtGhvAZBl4ANedpEKGhavWicRxJlv\nW4nwsQyZtc+QW+NXtWjU0n6W0lYdAwrPWYIg1EmaWMPQyLBvZd1dvlFEOsBjH0XI\nj0gybF589FXYPYlk8m0vc8rgdBxj6zgH8D3chjXSV6bV/GaCCQSyRoT4VWTWx3J7\nC55PDchEordqfdzbfl9WK6W5651XwJIy3r6PPwI9bLgn5AMD1F4o49SHF38i41Rp\nCNcxvbrxLpL1xnEvBOhbvbg1iEYxzv6057JpLtuMN5YKSJqAJnmFQqkkqrFdMj6a\nTaxLEefrAgMBAAECggEASAeIleOMEPFHZ9G307URX+s53PYRzz8Em4W9WFdaD8ED\nzcIhcV4Kmvs1i57icpYiXgx9CVN6hy8Md9rkBbsi5bowF+x1QL6TERC3cA7dGwKR\nn+/9QekPOtKp2AgRJTejFCSSlcMBZbUg5OEUkZ1BARB+seryr872nSxijbLP8rFA\ng32IJGopyRI6fTXfgeN0Pho8PIENrOK3+aYEnsl+zOJVVFUykLXyt+TvyFOcNVw+\nA7YRXE9OU+Z9Tkb5wHLorlk5jhEOcibOHYT+AQ7ph7K+tVvWpFe+FA9LCdxU5Ryx\nQPlnJoWCu0lf83vy4+f1WnjhrWGITx1BZclUqY0qiQKBgQDR6g7SJ9W0QIhAbSeV\nxiMtqRwBa2SJfC+ZMmNYH9yJD7DmcfO3n+XxCYp82ghNFOTN71MNfPEjM9g6xTqE\nuhS46q8cAB5F2QPS6fUU0e3YgInsILtoKTDRm+QTfS6WWA6VE9Se+Ll1qaubEVwq\n/TiZawlfmQouTGn1og+cv+jCXwKBgQDNDptUp6gNMForGWW4DXQTxMOsT/RBosoQ\ns8ozjqJKuE2zZx+InYzRtb2oYA2U6gNyWCJkMMfxaMAzoOblhepF4UyQ/wVwFE8h\nmp98QMhkl0jaS7I/wlI6u4ikvKj0p3xGvr/AJKH+coH1AEYhVNGUGwF9f/ZtvaKm\nColWocj99QKBgBSOiVkHUaRPVYiJqADA4J0OHJH/BF96a+biylvM8vnxMW+/5RAs\ndoY+WvOTHpD95NJOB6IghDTgVOKcgfiRiIn7YZ6qXEyWzgsPolKhpFs5a0hWhEPV\nFNTSIWnPLorGoNb0lDPlQ7REI2wSLSaAmdRcaRSVliumjBHkBwdgu9idAoGAOXcE\ndL7fS4LnYfimFuQ+SWP06g8mBlbWhcO8wKISPRpVPBeEMMbmNcbWtZ7lb3v9J0gn\nqyg4gCC47D8FNgFHW/n9eQzeu0AVxPcOBsYo4ne7BOH9u/x7CtaPPotYVeex3imK\nlxAtDZ+NZ9mBzcl1SiofSspXhv2D3UBKqKqCJxkCgYEAiz/CcISmLEi3b3cRNzu9\n2k8GEMO6x6qhphQhnxJay9GDNfNLKDhiv+nIaSk/kXEIZplL6eitkVFRsHp/pke4\n+TM64PLJxm6WuPv7vuXrE8N/QJeMjcCEYFhILoHOzWLS6aHt5USgx9HETFQjO1dp\nJX+dVjN85yaAgadR94+0Hco=\n-----END PRIVATE KEY-----\n",
+  "client_email": "manchesterairportspaces@axiomatic-skill-443614-c4.iam.gserviceaccount.com",
+  "client_id": "101932328851826885301",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/manchesterairportspaces%40axiomatic-skill-443614-c4.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

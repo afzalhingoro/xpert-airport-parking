@@ -1,0 +1,2 @@
+Airport,ProductType,ProductName,ProductID,ReferenceNumber,BookingStatus,CustomerName,DepartureDate,ArrivalDate,DepartureTerminal,ArrivalTerminal,DepartureFlightNo,ReturnFlightNo,Regno,Make,Model,CarColor,Passengers,Mobile,ListPrice,AmountPrice,SupplierCost
+Stansted,"Park and Ride","Park and Ride Non Flex",120,XAP-4094,Completed,"test booking","2025-08-01 09:00:00","2025-08-02 09:00:00","Main Terminal","Main Terminal",,,red,v54,bg5,blue,1,45465657575,44.99,0,0

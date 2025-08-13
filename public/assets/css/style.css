@@ -1,0 +1,57 @@
+ .permission_checkboxes{
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     flex-wrap: wrap;
+     padding-left: 20px;
+ }
+  .permission_checkboxes .checkbox{
+      width: 30%;
+      
+  }
+  .total_booking_bar{
+      border: 1px solid #e4e4e4;
+      border-radius: 9px;
+      margin-bottom: 10px;
+      background: #f5f5f6;
+      float: none;
+      clear: both;
+          margin: 12px 15px;
+  }
+  .floatNone{
+        float: none!important;
+    }
+    .form-inline .form_data{
+        display: flex;
+        flex-direction: column;
+    }
+    .resetBtn{
+        margin-top: 15px;
+    }
+    .departureTable{
+        margin-top: 15px;
+    }
+    .mt-20{
+    	margin-top: 20px
+    }
+    .mt-30{
+    	margin-top: 30px
+    }
+    .d-flex{
+    	display: flex;
+    }
+    .justify-content-end{
+    	justify-content: flex-end;
+    }
+    .justify-content-start{
+    	justify-content: flex-start;
+    }
+    .align-items-center{
+    	align-items: center
+    }
+    .mt-0{
+    margin-top: 0
+    }
+    .ml-5{
+    margin-left: 5px;
+    }
