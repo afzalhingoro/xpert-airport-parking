@@ -87,8 +87,8 @@ class BookingController extends Controller
     //This Will Run when contact number will cahnge on booking page  // checkBooking
     function checkBooking(Request $request)
     {
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
+        //error_reporting(E_ALL);
+        //ini_set('display_errors', 1);
         // $validate = $request->validate(['email' => 'required|unique:customers,email,' . $request->input('email') ]);
         $title = $request->input('title');
         $firstname = $request->input('firstname');

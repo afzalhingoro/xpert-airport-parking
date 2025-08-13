@@ -87,7 +87,8 @@
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+@section("title","Stansted Airport Parking – Book Now for Secure Stansted Deals")
+@section("meta_description" , "Book now for secure, affordable Stansted airport parking. Enjoy peace of mind with CCTV monitored Park & Ride. Reserve today and travel stress free!")
 @section('content')
 
 <section id="bg-css" style="background-image: url('theme-new/img/Banner-V2-others.png');background-size: cover;">
@@ -123,7 +124,7 @@
                                 Don't worry. Don't panic at the last minute. Just reliable, simple, and reasonably priced airport parking. It takes less than a minute to book with Xpert Airport Parking, and your car is kept safe until you return.
                             </p>
                             
-                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 30px; margin-bottom: 15px;">
+                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;">
                                 <span style="font-size: 20px; font-weight: bold;">How It Operates: </span>
                             </h3>
                             
@@ -131,7 +132,7 @@
                                 Notify Us When You Take Off. Decide on times and dates. 
                             </p>
                             
-                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 30px; margin-bottom: 15px;">
+                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;">
                                 <span style="font-size: 20px; font-weight: bold;">Select Your Spot: </span>
                             </h3>
                             
@@ -139,7 +140,7 @@
                                Examine safe, closely watched parking possibilities.
                             </p>
                             
-                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 30px; margin-bottom: 15px;">
+                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;">
                                 <span style="font-size: 20px; font-weight: bold;">Book & Unwind: </span>
                             </h3>
                             
@@ -160,7 +161,7 @@
 					        <img class="img-fluid" style="margin-top: 30px;height: 465px;" alt="" src="https://www.xpertairportparking.com/storage/pagebanners/zzbd9zTxEfW0x46LpswxOxe8Hd6izgEORTXoM7LD.png">
 					    </div>
 					    <div class="col-lg-7 align-content-center">
-					        <h3 style="font-size: 20px; font-weight: bold; margin-top: 30px; margin-bottom: 15px;">
+					        <h3 style="font-size: 20px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;">
                                 <span style="font-size: 20px; font-weight: bold;">Why Travelers Love Us: Safe & Secure: </span>
                             </h3>
                             
@@ -168,7 +169,7 @@
                                 Professional on-site staff and round-the-clock CCTV.
                             </p>
                             
-                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 30px; margin-bottom: 15px;">
+                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;">
                                 <span style="font-size: 20px; font-weight: bold;">Excellent Value: </span>
                             </h3>
                             
@@ -176,7 +177,7 @@
                                 Reasonably priced with no additional costs.
                             </p>
                             
-                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 30px; margin-bottom: 15px;">
+                            <h3 style="font-size: 20px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;">
                                 <span style="font-size: 20px; font-weight: bold;">Dependable Service: </span>
                             </h3>
                             

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
 use Carbon\Carbon;
+use App\Http\Controllers\EmailController;
 
 class SupportController extends Controller
 {
@@ -16,7 +17,7 @@ class SupportController extends Controller
         $agent = [
             'name' => Auth::user()->name,
             'email' => Auth::user()->email,
-            'profile_pic' => 'https://ui-avatars.com/api/?name=John+Smith&background=random'
+            'profile_pic' => 'https://ui-avatars.com/api/?name=' . Auth::user()->name . '&background=random'
         ];
         
         return view('admin.support.index', compact('agent'));
@@ -76,6 +77,10 @@ class SupportController extends Controller
     
     public function updateBooking(Request $request)
     {
+        // Error reporting for debugging
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        // Validation
         $validated = $request->validate([
             'id' => 'required|integer|exists:airports_bookings,id',
             'first_name' => 'required|string|max:255',
@@ -104,41 +109,255 @@ class SupportController extends Controller
             'refund_status' => 'nullable|string|max:50',
         ]);
     
+        // Update record
         DB::table('airports_bookings')
             ->where('id', $validated['id'])
-            ->update([
-                'first_name' => $validated['first_name'],
-                'last_name' => $validated['last_name'],
-                'email' => $validated['email'],
-                'phone_number' => $validated['phone_number'],
-                'address' => $validated['address'],
-                'city' => $validated['city'],
-                'country' => $validated['country'],
-                'postal_code' => $validated['postal_code'],
-                'make' => $validated['make'],
-                'model' => $validated['model'],
-                'color' => $validated['color'],
-                'registration' => $validated['registration'],
-                'departDate' => $validated['departDate'],
-                'deprTerminal' => $validated['deprTerminal'],
-                'deptFlight' => $validated['deptFlight'],
-                'returnDate' => $validated['returnDate'],
-                'returnTerminal' => $validated['returnTerminal'],
-                'returnFlight' => $validated['returnFlight'],
-                'booking_amount' => $validated['booking_amount'],
-                'discount_amount' => $validated['discount_amount'],
-                'total_amount' => $validated['total_amount'],
-                'payment_method' => $validated['payment_method'],
-                'payment_status' => $validated['payment_status'],
-                'refund_status' => $validated['refund_status'],
+            ->update(array_merge($validated, [
                 'updated_at' => now(),
-            ]);
+            ]));
+    
+        // Email sending part
+        $row = DB::table('airports_bookings')->where("id", $validated['id'])->first();
+        $airport_detail = DB::table('airports')->where("id", $row->airportID)->first();
+        $company_data = DB::table('companies')->where('id', $row->companyId)->first();
+    
+        $directions = '';
+        if (!empty($company_data)) {
+            $directions = "<strong>Arrival:</strong><br>" . $company_data->arival . "<br><strong>Return:</strong><br>" . $company_data->return_proc . "<br>";
+        }
+    
+        $template_data = [
+            "guidence" => $directions,
+            "username" => $row->first_name . " " . $row->last_name,
+            "email" => $row->email,
+            "telephone" => $row->phone_number,
+            "carpark" => "Car Park",
+            "c_parent" => $company_data->name ?? '',
+            "company" => $company_data->name ?? '',
+            "ptype" => $row->booked_type,
+            "airport" => $airport_detail->name ?? '',
+            "terminal" => $this->getTerminalName($row->deprTerminal),
+            "rterminal" => $this->getTerminalName($row->returnTerminal),
+            "days" => $row->no_of_days,
+            "start_date" => $row->departDate,
+            "end_date" => $row->returnDate,
+            "booktime" => date("Y-m-d H:i:s"),
+            "r_flight_no" => $row->returnFlight,
+            "reg" => $row->registration,
+            "model" => $row->model,
+            "make" => $row->make,
+            "color" => $row->color,
+            "payment_gatway" => $row->payment_method,
+            "payment_status" => "success",
+            "price" => $row->total_amount,
+            "addtionalprice" => 0,
+            "ref" => $row->referenceNo,
+            "api_ref" => $row->ext_ref
+        ];
+    
+        // Send email to customer
+        $email_send = new EmailController();
+        $email_send->sendGmail("Update Booking", $row->email, $template_data);
+    
+        // Send email to company if aph_id is null
+        if (is_null($company_data->aph_id)) {
+            $filePath = $this->create_csv_air($validated['id'], 'Amend');
+            $email_send->sendGmailWithAttachment("Update Booking Company", $company_data->company_email, $template_data, $filePath);
+        }
     
         return response()->json([
             'success' => true,
-            'message' => 'Booking updated successfully.'
+            'message' => 'Booking updated and email sent successfully.'
         ]);
     }
+    
+    public function resendBookingEmail($id)
+    {
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+        // Fetch booking record
+        $row = DB::table('airports_bookings')->where("id", $id)->first();
+        if (!$row) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Booking not found.'
+            ], 404);
+        }
+    
+        // Build email template data
+        $template_data = [
+            "username"       => $row->first_name . " " . $row->last_name,
+            "email"          => $row->email,
+            "telephone"      => $row->phone_number,
+            "carpark"        => "Car Park",
+            "c_parent"       => $row->company->name ?? '',
+            "ptype"          => $row->booked_type,
+            "airport"        => $row->airport->name ?? '',
+            "terminal"       => $row->dterminal->name ?? '',
+            "rterminal"      => $row->rterminal->name ?? '',
+            "days"           => $row->no_of_days,
+            "start_date"     => $row->departDate,
+            "end_date"       => $row->returnDate,
+            "booktime"       => $row->created_at,
+            "r_flight_no"    => $row->returnFlight,
+            "reg"            => $row->registration,
+            "model"          => $row->model,
+            "make"           => $row->make,
+            "color"          => $row->color,
+            "payment_gatway" => $row->payment_method,
+            "payment_status" => "success",
+            "price"          => $row->total_amount,
+            "addtionalprice" => 0,
+            "ref"            => $row->referenceNo,
+        ];
+    
+        $email_send = new EmailController();
+    
+        // Send to client
+        $client_emails = [$row->email, 'bookings@manchesterairportspaces.co.uk'];
+        foreach ($client_emails as $email) {
+            $email_send->sendGmail("Add Booking", $email, $template_data);
+        }
+    
+        return response()->json([
+            'success' => true,
+            'message' => 'Booking email resent successfully.'
+        ]);
+    }
+
+    
+    public function create_csv_air($token, $status)
+
+    {
+
+        $query = "select
+
+
+
+		            ap.name AS Airport,
+
+					c.parking_type AS ProductType,
+
+					c.name AS ProductName,
+
+					c.id AS ProductID,
+
+					b.referenceNo AS ReferenceNumber,
+
+					b.booking_status AS BookingStatus,
+
+					CONCAT(b.first_name, ' ', b.last_name) AS CustomerName,
+
+					DATE_FORMAT(b.departDate, '%Y-%m-%d %H:%i:%s') AS DepartureDate,
+
+					DATE_FORMAT(b.returnDate, '%Y-%m-%d %H:%i:%s') AS ArrivalDate,
+
+					IF(b.deprTerminal > 0, (select airports_terminals.name from airports_terminals where airports_terminals.id= b.deprTerminal), 'TBA') As DepartureTerminal,
+
+					IF(b.returnTerminal > 0, (select airports_terminals.name from airports_terminals where airports_terminals.id= b.returnTerminal), 'TBA') As ArrivalTerminal,
+
+					b.deptFlight AS DepartureFlightNo,
+
+					b.returnFlight AS ReturnFlightNo,
+
+					b.registration AS Regno,
+
+					b.make AS Make,
+
+					b.model AS Model,
+
+					b.color AS CarColor,
+
+					b.passenger AS Passengers,
+
+					b.phone_number AS Mobile,
+
+					b.booking_amount AS ListPrice,
+
+					0 As AmountPrice,
+
+					0 As SupplierCost
+
+
+
+
+
+        			from airports_bookings as b
+
+        			join companies as c on c.id = b.companyId
+
+        			join airports as ap on ap.id = b.airportID
+
+        			left join airports_terminals as tr on tr.id = b.deprTerminal
+
+                    WHERE b.id =" . $token;
+
+
+
+        $results = DB::select($query);
+
+
+
+        if ($results > 0) {
+
+            $datenow = date("dmYhms");
+
+            $name = "ADP_$datenow.csv";
+
+            $csvpath = public_path('csv/');
+
+            $filepath = $csvpath . $name;
+
+            $outstream = fopen($filepath, "w");
+
+            // if($status != ""){
+
+            //  	$results[0]->BookingStatus = 'BookingStatus';
+
+            // }
+
+
+
+            fputcsv($outstream, array_keys((array) $results[0]));
+
+
+
+            foreach ($results as $result) {
+
+                // 	if($status != ""){
+
+                //       	$result->BookingStatus = $status;
+
+                // 	}
+
+                fputcsv($outstream, (array) $result);
+
+            }
+
+
+
+            // fclose($outstream);
+
+            rewind($outstream);
+
+            fclose($outstream);
+
+        }
+
+        return $filepath;
+
+    }
+    
+    // Helper function to get terminal name
+    private function getTerminalName($terminalId)
+    {
+        if ($terminalId != "TBA" && !empty($terminalId)) {
+            $terminal = DB::table('airports_terminals')->where("id", $terminalId)->first();
+            return $terminal->name ?? "TBA";
+        }
+        return "TBA";
+    }
+
     
     public function reschedule(Request $request, $id)
     {

@@ -1131,7 +1131,7 @@
                         </div>
                     </div>
                     
-                    <div class="mb-4">
+                    <div class="mb-4" style="display: none;">>
                         <label class="form-label">Email Template</label>
                         <select class="form-select" id="emailTemplate">
                             <option>Booking Confirmation</option>
@@ -1142,14 +1142,14 @@
                         </select>
                     </div>
                     
-                    <div class="form-check mb-4">
+                    <div class="form-check mb-4" style="display: none;">>
                         <input class="form-check-input" type="checkbox" id="includeSMS" checked>
                         <label class="form-check-label" for="includeSMS">
                             Also send SMS notification
                         </label>
                     </div>
                     
-                    <div class="email-preview">
+                    <div class="email-preview" style="display: none;">
                         <div class="email-header">
                             <div class="email-title">Booking Confirmation</div>
                             <div class="email-subtitle">Xpert Airport Parking - Booking #<span id="previewReference"></span></div>
@@ -1194,6 +1194,10 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- SweetAlert2 + jQuery (agar already included nahi) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
         $(document).ready(function() {
@@ -1497,10 +1501,52 @@
                     } else if (action === 'cancel') {
                         cancelBooking(id);
                     } else if (action === 'email') {
-                        openEmailModal(booking);
+                        //openEmailModal(booking);
+                        confirmAndAjax("/admin/support-panel/bookings/" + id + "/resend-email");
                     }
                 });
             });
+            
+            function confirmAndAjax(url) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You want to resend booking confirmation email again?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Please Resend',
+                    cancelButtonText: 'Cancel',
+                }).then((result) => {
+                    if (!result.isConfirmed) return;
+            
+                    Swal.showLoading(); // loading dikhao
+            
+                    $.get(url, function(response) {
+                        Swal.close(); // pehle loading close karo
+            
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message || 'Something went wrong!',
+                            });
+                        }
+                    }).fail(function() {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Request failed. Please try again!',
+                        });
+                    });
+                });
+            }
+
 
             
             // Simulate getting booking details
