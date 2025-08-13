@@ -1,0 +1,5 @@
+storage/framework/
+storage/logs/
+dev.xpertparking.com/
+statging.xpertparking.com/
+public/email_parsing/run/error_log
