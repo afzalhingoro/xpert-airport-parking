@@ -19,7 +19,7 @@ class airports_bookings extends Model
 
     protected $table = 'airports_bookings';
 
-    protected $fillable = ["airportID", "companyId", "customerId", "edit_by", "title", "first_name", "last_name", "email", "phone_number", "fulladdress", "address", "address2", "town", "postal_code", "passenger", "referenceNo", "departDate", "deprTerminal", "deptFlight", "returnDate", "returnTerminal", "returnFlight", "no_of_days", "discount_code", "created_at", "booking_status", "payment_status", "removed", "status","old_total_amt", "created_at", "", "", "", "", "", "", ""];
+    protected $fillable = ["airportID", "companyId", "customerId", "edit_by", "title", "first_name", "last_name", "email", "phone_number", "fulladdress", "address", "address2", "town", "postal_code", "passenger", "referenceNo", "departDate", "deprTerminal", "deptFlight", "returnDate", "returnTerminal", "returnFlight", "no_of_days", "discount_code", "created_at", "booking_status", "payment_status", "removed", "status","old_total_amt", "created_at","refund_method","refund_reason","additional_notes", "", "", "", "", "", "", ""];
 
 
 

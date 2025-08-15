@@ -54,6 +54,7 @@ Route::get('/test-email', [EmailController::class, 'testEmail']);
 */
 
 Route::get('/admin/support-panel', [SupportController::class, 'index'])->name('support.panel');
+Route::post('/support/bookings', [SupportController::class, 'store'])->name('support.bookings.store');
 Route::get('/admin/support-panel/bookings/{id}/resend-email', [SupportController::class, 'resendBookingEmail']);
 Route::post('/admin/support/search', [SupportController::class, 'search'])->name('support.search');
 Route::get('/admin/support/fetch/{id}', [SupportController::class, 'fetch'])->name('support.fetch');

@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 use Auth;
 use Carbon\Carbon;
 use App\Http\Controllers\EmailController;
+use App\Models\airports_bookings;
+use Illuminate\Support\Str;
+use App\Models\Company;
 
 class SupportController extends Controller
 {
@@ -19,8 +22,8 @@ class SupportController extends Controller
             'email' => Auth::user()->email,
             'profile_pic' => 'https://ui-avatars.com/api/?name=' . Auth::user()->name . '&background=random'
         ];
-        
-        return view('admin.support.index', compact('agent'));
+        $companies = Company::all();
+        return view('admin.support.index', compact('agent' , 'companies'));
     }
 
     public function search(Request $request)
@@ -214,7 +217,7 @@ class SupportController extends Controller
         $email_send = new EmailController();
     
         // Send to client
-        $client_emails = [$row->email, 'bookings@manchesterairportspaces.co.uk'];
+        $client_emails = [$row->email];
         foreach ($client_emails as $email) {
             $email_send->sendGmail("Add Booking", $email, $template_data);
         }
@@ -434,25 +437,419 @@ class SupportController extends Controller
             
         return response()->json(['success' => true]);
     }
+    
+    function refundPayment($amount, $orderId, $transactionId)
+    {
+        
+        require_once app_path('library/payzone/includes/payzone_gateway_new.php');
+        if (!isset($GLOBALS['PayzoneGateway'], $GLOBALS['PayzoneHelper'])) {
+            return [
+                'StatusCode' => 100,
+                'Message'    => 'Gateway not initialised',
+                'ErrorMessages' => true,
+            ];
+        }
+    
+        
+        $PayzoneGateway = $GLOBALS['PayzoneGateway'];
+        $PayzoneHelper  = $GLOBALS['PayzoneHelper'];
+    
+        
+        $amount        = (float)$amount;
+        $orderId       = (string)$orderId;
+        $transactionId = (string)$transactionId;
+    
+        if ($amount <= 0) {
+            return [
+                'StatusCode' => 100,
+                'Message'    => 'Invalid refund amount',
+                'ErrorMessages' => true,
+            ];
+        }
+        if ($orderId === '' || $transactionId === '') {
+            return [
+                'StatusCode' => 100,
+                'Message'    => 'OrderID or TransactionID missing',
+                'ErrorMessages' => true,
+            ];
+        }
+    
+        $secretKey    = $PayzoneGateway->getSecretKey();
+        $hashMethod   = $PayzoneGateway->getHashMethod();
+        $currencyCode = $PayzoneGateway->getCurrencyCode();
+    
+        $orderDescription = 'Refund order';
+    
+        $stringToHash = $PayzoneHelper->generateStringToHashDirect(
+            $amount,       
+            $currencyCode,
+            $orderId,
+            $orderDescription,
+            $secretKey
+        );
+        $digest = $PayzoneHelper->calculateHashDigest($stringToHash, $secretKey, $hashMethod);
+    
+        $shoppingCart = [
+            'Amount'          => $amount,
+            'CurrencyCode'    => $currencyCode,
+            'OrderID'         => $orderId,
+            'CrossReference'  => $transactionId,
+            'OrderDescription'=> $orderDescription,
+            'HashMethod'      => $hashMethod,
+        ];
+    
+        $isValid = $PayzoneHelper->checkIntegrityOfIncomingVariablesDirect(
+            'SHOPPING_CART_CHECKOUT',
+            $shoppingCart,
+            $digest,
+            $secretKey
+        );
+    
+        if (!$isValid) {
+            return [
+                'StatusCode' => 100,
+                'Message'    => 'Hash mismatch validation failure',
+                'ErrorMessages' => true,
+            ];
+        }
+        $refundPayload = $PayzoneGateway->buildXHRefund(
+            $shoppingCart['Amount'],
+            $shoppingCart['OrderID'],
+            $shoppingCart['CrossReference']
+        );
+    
+       
+        require_once app_path('library/payzone/includes/gateway/refund_process.php');
+    
+        if (!isset($paymentResponse) || !is_array($paymentResponse)) {
+            return [
+                'StatusCode' => 100,
+                'Message'    => 'Refund process failed (no response)',
+                'ErrorMessages' => true,
+            ];
+        }
+    
+        return $paymentResponse;
+    }
+    
+    public function refunds($id, $paymentMediums,$penaltyAmounts,$penaltyTo,$mode,$amount,$reason,$type,$emailTo) {
+        $response = ["success" => 0, "message" => "Technical Error!!"];
+    
+        $adminId = Auth::check() ? Auth::user()->id : 0;
+    
+        $isCancel       = ($mode === 'cancel');
+        $paymentAction  = 'Refund';   
+        $paymentCase    = $isCancel ? 'cancel' : 'Refund';
+        $bookingStatus  = $isCancel ? 'cancelled' : 'Refund';
+        $statusLabel    = $isCancel ? 'Cancel Booking' : 'Refund';
+        $companyStatus  = $isCancel ? 'Cancel Booking Company' : 'Refund';
+    
+        $clientEmail  = $emailTo['client']  ?? '';
+        $companyEmail = $emailTo['company'] ?? '';
+        $adminEmail   = $emailTo['admin']   ?? '';
+    
+        $booking = airports_bookings::where('id', $id)->first();
+        if (!$booking) {
+            return ["success" => 0, "message" => "Record not found..!!"];
+        }
+    
+        $companyId = $booking->companyId;
+    
+        if ($amount === 'full') {
+            $refundAmount = ((float)$booking->booking_amount) - ((float)$booking->discount_amount);
+        } else {
+            $refundAmount = (float)$amount;
+        }
+    
+        if ($reason === '00') {
+            $reason         = 'Not Show';
+            $statusLabel    = 'Cancel Booking Not Show';
+            $bookingStatus  = 'Noshow';
+        }
+    
+        if ($booking->payment_method === null) {
+            $booking->payment_method = 'agent';
+        }
+        
+        $bookingPaymentMedium = "";
+        $transactionData = [
+            "orderID"        => $booking->id,
+            "referenceNo"    => $booking->referenceNo,
+            "companyId"      => $booking->companyId,
+            "booking_amount" => $booking->booking_amount,
+            "extra_amount"   => $booking->extra_amount,
+            "discount_amount"=> $booking->discount_amount,
+            "smsfee"         => $booking->smsfee,
+            "booking_fee"    => $booking->booking_fee,
+            "cancelfee"      => $booking->cancelfee,
+            "payable"        => $refundAmount,
+            "amount_type"    => "credit",
+            "payment_method" => $booking->payment_method,
+            "payment_action" => $paymentAction,
+            "payment_case"   => $paymentCase,
+            "payment_medium" => $bookingPaymentMedium,
+            "comments"       => $reason,
+            "edit_by"        => $adminId,
+            "total_amount"   => $booking->total_amount,
+        ];
+    
+        $transactionId = DB::table('booking_transaction')->insertGetId($transactionData);
+    
+        if ($bookingStatus === 'Noshow' || $isCancel || !$isCancel) {
+            $bookingAction = $isCancel ? 'Cancelled' : 'Refund';
+            if ($bookingStatus === 'Noshow') {
+                $bookingAction = 'Noshow';
+            }
+    
+            $bookData     = airports_bookings::getSingleRowById($id);
+            $companyData  = DB::table('companies')->where('id', $bookData->companyId)->first();
+    
+            $tpl = [
+                "username"    => trim(($bookData->first_name ?? '') . ' ' . ($bookData->last_name ?? '')),
+                "airport"     => optional($bookData->airport)->name,
+                "terminal"    => optional($bookData->dterminal)->name,
+                "rterminal"   => optional($bookData->rterminal)->name,
+                "company"     => optional($bookData->company)->name,
+                "days"        => $bookData->no_of_days,
+                "carpark"     => "Car Park",
+                "c_parent"    => $companyData->name ?? '',
+                "email"       => $bookData->email ?? '',
+                "telephone"   => $bookData->phone_number ?? '',
+                "booktime"    => $bookData->created_at ?? '',
+                "start_date"  => $bookData->departDate ?? '',
+                "end_date"    => $bookData->returnDate ?? '',
+                "r_flight_no" => $bookData->returnFlight ?? '',
+                "reg"         => $bookData->registration ?? '',
+                "vehicle"     => $bookData->registration ?? '',
+                "model"       => $bookData->model ?? '',
+                "color"       => $bookData->color ?? '',
+                "make"        => $bookData->make ?? '',
+                "ref"         => $bookData->referenceNo ?? '',
+                "refund"      => $refundAmount,
+                "refund_reason" => $bookData->refund_reason,
+                "refundmethod" => $bookData->refund_method,
+                "refundnotes" => $bookData->addtional_notes
+            ];
+    
+            @file_put_contents("cancel_email_data.txt", print_r($tpl, true));
+    
+            $emailer = new EmailController();
+    
+            $client_emails = [$bookData->email];
+            foreach ($client_emails as $email) {
+                $emailer->sendGmail("Refund", $email, $tpl);
+            }
+            return ["success" => 1, "message" => 'Booking Successfully ' . ucwords($mode) . '..!!'];
+        }
+    
+        return ["success" => 0, "message" => "Try again..!!"];
+    }
 
     public function processRefund(Request $request, $id)
     {
-        $request->validate([
-            'refund_amount' => 'required|numeric',
-            'refund_reason' => 'required|string|max:255'
-        ]);
-        
         // In a real application, we would integrate with payment gateway
         DB::table('airports_bookings')
             ->where('id', $id)
             ->update([
                 'refund_status' => 'Processed',
                 'booking_status' => 'Refund',
-                'modifydate' => now()
+                'additional_notes' => $request->refundnotes,
+                'refund_reason' => $request->refundreason,
+                'refund_method' => $request->refundmethod,
             ]);
             
-        return response()->json(['success' => true]);
+        try{
+            $res = $this->refunds($id, "", "", "", 'refund', "full", $request->refundreason , "", "");
+            return response()->json([
+                'status' => "success",
+                "message" => $res
+            ]);
+        }
+        catch (\Throwable $e) {
+            return response()->json([
+                'success' => 0,
+                'message' => 'Error: ' . $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ], 500);
+        }
+        
     }
+    
+   public function store(Request $request)
+    {
+        // Validate the request data
+        $validated = $request->validate([
+            'first_name'      => 'required|string|max:50',
+            'last_name'       => 'required|string|max:50',
+            'email'           => 'required|email|max:100',
+            'phone_number'    => 'required|string|max:50',   // table shows 50
+            'address'         => 'nullable|string|max:255',
+            'city'            => 'nullable|string|max:100',
+            'country'         => 'nullable|string|max:100',
+            'postal_code'     => 'nullable|string|max:100',
+    
+            'make'            => 'required|string|max:255',
+            'model'           => 'required|string|max:255',
+            'color'           => 'required|string|max:255',
+            'registration'    => 'required|string|max:255',
+    
+            'departDate'      => 'required|date',
+            'deprTerminal'    => 'required|string|max:100',
+            'deptFlight'      => 'nullable|string|max:100',
+            'returnDate'      => 'required|date',
+            'returnTerminal'  => 'required|string|max:100',
+            'returnFlight'    => 'nullable|string|max:100',
+    
+            'booking_amount'  => 'required|numeric',
+            'discount_amount' => 'nullable|numeric',
+            'payment_method'  => 'required|string|in:stripe,paypal,bank,cash',
+            'payment_status'  => 'required|string|in:success,pending,failed',
+        ]);
+    
+        DB::beginTransaction();
+    
+        try {
+            // Calculate number of days
+            $departDate = Carbon::parse($validated['departDate']);
+            $returnDate = Carbon::parse($validated['returnDate']);
+            $no_of_days = $returnDate->diffInDays($departDate); // keep your logic as-is
+    
+            // 1) FIND OR CREATE CUSTOMER
+            // Adjust table name if yours is different (e.g., 'users').
+            $customersTable = 'customers';
+    
+            $existingCustomer = DB::table($customersTable)
+                ->where(function ($q) use ($validated) {
+                    $q->where('email', $validated['email'])
+                      ->orWhere('phone_number', $validated['phone_number']);
+                })
+                ->first();
+    
+            if ($existingCustomer) {
+                $customerId = $existingCustomer->id;
+    
+                // Optional: keep their details fresh
+                DB::table($customersTable)
+                    ->where('id', $customerId)
+                    ->update([
+                        'title'        => $request->title ?? ($existingCustomer->title ?? 'Mr'),
+                        'first_name'   => $validated['first_name'],
+                        'last_name'    => $validated['last_name'],
+                        'phone_number' => $validated['phone_number'],
+                        'address'      => $validated['address'] ?? null,
+                        'city'         => $validated['city'] ?? null,
+                        'country'      => $validated['country'] ?? null,
+                        'postal_code'  => $validated['postal_code'] ?? null,
+                        'source_site'  => $existingCustomer->source_site ?? 'Admin Panel',
+                        'status'       => $existingCustomer->status ?? 'Yes',
+                        'updated_at'   => now(),
+                    ]);
+            } else {
+                $customerData = [
+                    'title'        => $request->title ?? 'Mr',
+                    'first_name'   => $validated['first_name'],
+                    'last_name'    => $validated['last_name'],
+                    'email'        => $validated['email'],
+                    'phone_number' => $validated['phone_number'],
+                    'address'      => $validated['address'] ?? null,
+                    'city'         => $validated['city'] ?? null,
+                    'country'      => $validated['country'] ?? null,
+                    'postal_code'  => $validated['postal_code'] ?? null,
+                    'source_site'  => 'Admin Panel',
+                    'status'       => 'Yes',
+                    'created_at'   => now(),
+                    'updated_at'   => now(),
+                ];
+    
+                // If your table enforces NOT NULL on password, set a random one (optional):
+                // $customerData['password'] = Hash::make(Str::random(16));
+    
+                $customerId = DB::table($customersTable)->insertGetId($customerData);
+    
+                if (!$customerId) {
+                    throw new \Exception('Failed to create customer record');
+                }
+            }
+    
+            // 2) CREATE BOOKING
+            $referenceNo = 'XP' . strtoupper(Str::random(6)) . date('Ymd');
+    
+            $bookingData = [
+                'airportID'       => $request->airportID ?? 1,
+                'companyId'       => $request->companyId ?? null,
+                'customerId'      => $customerId, // ← link to the customer
+                'product_code'    => $request->product_code ?? 'PARK',
+                'edit_by'         => auth()->id(),
+                'title'           => $request->title ?? 'Mr',
+                'first_name'      => $validated['first_name'],
+                'last_name'       => $validated['last_name'],
+                'email'           => $validated['email'],
+                'phone_number'    => $validated['phone_number'],
+                'fulladdress'     => $validated['address'] ?? null,
+                'address'         => $validated['address'] ?? null,
+                'city'            => $validated['city'] ?? null,
+                'country'         => $validated['country'] ?? null,
+                'postal_code'     => $validated['postal_code'] ?? null,
+                'referenceNo'     => $referenceNo,
+                'departDate'      => $validated['departDate'],
+                'deprTerminal'    => $validated['deprTerminal'],
+                'deptFlight'      => $validated['deptFlight'] ?? null,
+                'returnDate'      => $validated['returnDate'],
+                'returnTerminal'  => $validated['returnTerminal'],
+                'returnFlight'    => $validated['returnFlight'] ?? null,
+                'no_of_days'      => $no_of_days,
+                'discount_code'   => $request->discount_code ?? null,
+                'discount_amount' => $validated['discount_amount'] ?? 0.00,
+                'booking_amount'  => $validated['booking_amount'],
+                'total_amount'    => $validated['booking_amount'] - ($validated['discount_amount'] ?? 0),
+                'booking_status'  => 'Completed',
+                'booking_action'  => 'Booked',
+                'payment_status'  => $validated['payment_status'],
+                'make'            => $validated['make'],
+                'model'           => $validated['model'],
+                'color'           => $validated['color'],
+                'registration'    => $validated['registration'],
+                'agentID'         => auth()->id(),
+                'source_site'     => 'Admin Panel',
+                'user_ip'         => $request->ip(),
+                'payment_method'  => $validated['payment_method'],
+                'created_at'      => now(),
+                'updated_at'      => now(),
+            ];
+    
+            $bookingId = DB::table('airports_bookings')->insertGetId($bookingData);
+            if (!$bookingId) {
+                throw new \Exception('Failed to insert booking record');
+            }
+    
+            DB::commit();
+    
+            return response()->json([
+                'success' => true,
+                'message' => 'Booking created successfully',
+                'data'    => [
+                    'referenceNo' => $referenceNo,
+                    'bookingId'   => $bookingId,
+                    'customerId'  => $customerId,
+                ],
+            ]);
+    
+        } catch (\Exception $e) {
+            DB::rollBack();
+    
+            \Log::error('Booking creation failed: ' . $e->getMessage(), [
+                'exception' => $e,
+                'request'   => $request->all()
+            ]);
+    
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create booking: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
 
     public function resendEmail($id)
     {

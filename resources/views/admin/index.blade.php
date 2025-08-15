@@ -23,7 +23,7 @@
             <div class="row">
            
 
-                <div class="col-sm-7 infobox-container">
+                <div class="col-sm-12 infobox-container">
                     <div class="infobox infobox-green">
                         <div class="infobox-icon">
                             <i class="ace-icon fa fa-plane"></i>
@@ -59,7 +59,7 @@
 
                         <div class="infobox-data">
                             <span class="infobox-data-number">{{$todayTotal}}</span>
-                            <div class="infobox-content">XAP Bookings Today</div>
+                            <div class="infobox-content">Bookings Today</div>
                         </div>
 
 

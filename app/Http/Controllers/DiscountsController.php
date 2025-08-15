@@ -113,19 +113,11 @@ class DiscountsController extends Controller
             }
 
         } 
-
-
-
-
-        if($role_nam == 'Operations' || $role_nam == 'Controller'){
-        $discounts = $discounts->where("discount_for","BK")->orderByDesc('id')->get();
-        }else{
-        $discounts = $discounts->orderByDesc('id')->get();    
-        }
         // $discounts = date("d-m-Y",strtotime($discounts->start_date));
 
         // $discounts =date("d-m-Y",strtotime($discounts->end_date));
         
+        $discounts = $discounts->orderByDesc('id')->get();    
        
 
         return view("admin.discounts.list", ["discounts" => $discounts, "role_nam" => $role_nam]);

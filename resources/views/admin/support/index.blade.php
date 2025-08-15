@@ -557,6 +557,29 @@
         .status-refund { background-color: #6f42c1; }
         .status-processed { background-color: #007bff; }
         .status-abandoned { background-color: orange; }
+        
+        
+        
+        /* Add to your existing CSS */
+        .required:after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .action-tabs .nav-link {
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 8px 8px 0 0;
+            color: var(--primary-purple) !important;
+            font-weight: 600;
+            border: none;
+        }
+        
+        .action-tabs .nav-link.active {
+            color: var(--dark-purple);
+            background-color: var(--lighter-purple);
+            border-bottom: 3px solid var(--primary-purple);
+        }
 
     </style>
 </head>
@@ -595,15 +618,21 @@
         <!-- Search Section -->
         <div class="search-container">
             <h2 class="mb-4"><i class="fas fa-headset me-2"></i> Customer Support Panel</h2>
-            <div class="search-box">
-                <i class="fas fa-search search-icon"></i>
-                <input 
-                    type="text" 
-                    class="form-control search-input" 
-                    id="searchInput" 
-                    placeholder="Search bookings by reference, name, email, phone, or vehicle details..."
-                    autofocus
-                >
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="search-box d-flex align-items-center" style="flex: 1; max-width: 80%;">
+                    <i class="fas fa-search search-icon me-2"></i>
+                    <input 
+                        type="text" 
+                        class="form-control search-input" 
+                        id="searchInput" 
+                        placeholder="Search bookings by reference, name, email, phone, or vehicle details..."
+                        autofocus
+                    >
+                </div>
+                
+                <button class="btn btn-primary ms-3" id="addBookingBtn" style="padding: 10px 20px; border-radius: 8px; background : var(--primary-purple);">
+                    <i class="fas fa-plus me-2"></i> Add New Booking
+                </button>
             </div>
         </div>
         
@@ -657,6 +686,184 @@
                             <!-- Results will be populated here via AJAX -->
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Booking Modal -->
+    <div class="modal fade" id="addBookingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus-circle me-2"></i> Add New Booking
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addBookingForm">
+                        <ul class="nav nav-tabs action-tabs mb-4">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#addCustomerTab">Customer</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#addVehicleTab">Vehicle</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#addTravelTab">Travel</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#addPaymentTab">Payment</a>
+                            </li>
+                        </ul>
+                        
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="addCustomerTab">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">First Name</label>
+                                        <input type="text" class="form-control" name="first_name" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Last Name</label>
+                                        <input type="text" class="form-control" name="last_name" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Email</label>
+                                        <input type="email" class="form-control" name="email" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Phone Number</label>
+                                        <input type="tel" class="form-control" name="phone_number" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Address</label>
+                                        <input type="text" class="form-control" name="address">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">City</label>
+                                        <input type="text" class="form-control" name="city">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Country</label>
+                                        <input type="text" class="form-control" name="country">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Postal Code</label>
+                                        <input type="text" class="form-control" name="postal_code">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="addVehicleTab">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Vehicle Make</label>
+                                        <input type="text" class="form-control" name="make" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Vehicle Model</label>
+                                        <input type="text" class="form-control" name="model" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Color</label>
+                                        <input type="text" class="form-control" name="color" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Registration</label>
+                                        <input type="text" class="form-control" name="registration" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="addTravelTab">
+                                <div class = "row mb-3">
+                                    <div class = "col-md-12">
+                                        <label class="form-label required">Companies</label>
+                                        <select class="form-select" name="companyId" required>
+                                            @foreach($companies as $c)
+                                                <option value="{{ $c->id }}">{{ ucwords($c->name) }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Departure Date</label>
+                                        <input type="datetime-local" class="form-control" name="departDate" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Return Date</label>
+                                        <input type="datetime-local" class="form-control" name="returnDate" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Departure Terminal</label>
+                                        <input type="text" class="form-control" name="deprTerminal" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Return Terminal</label>
+                                        <input type="text" class="form-control" name="returnTerminal" required>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Departure Flight</label>
+                                        <input type="text" class="form-control" name="deptFlight">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Return Flight</label>
+                                        <input type="text" class="form-control" name="returnFlight">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="addPaymentTab">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Booking Amount (£)</label>
+                                        <input type="number" class="form-control" name="booking_amount" step="0.01" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Discount Amount (£)</label>
+                                        <input type="number" class="form-control" name="discount_amount" step="0.01" value="0.00">
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Payment Method</label>
+                                        <select class="form-select" name="payment_method" required>
+                                            <option value="stripe">Stripe (Card)</option>
+                                            <option value="paypal">PayPal</option>
+                                            <option value="bank">Bank Transfer</option>
+                                            <option value="cash">Cash</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label required">Payment Status</label>
+                                        <select class="form-select" name="payment_status" required>
+                                            <option value="success">Completed</option>
+                                            <option value="pending">Pending</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveNewBookingBtn">Save Booking</button>
                 </div>
             </div>
         </div>
@@ -1208,6 +1415,13 @@
             const refundModal = new bootstrap.Modal('#refundModal');
             const emailModal = new bootstrap.Modal('#emailModal');
             const successToast = new bootstrap.Toast('#successToast');
+            
+            const addBookingModal = new bootstrap.Modal('#addBookingModal');
+
+            $('#addBookingBtn').click(function() {
+                addBookingModal.show();
+            });
+
             
             // DOM elements
             const searchInput = $('#searchInput');
@@ -1852,13 +2066,27 @@
             $('#processRefundBtn').click(function() {
                 const id = $('#refundBookingId').val();
                 
-                // Simulate API call
-                setTimeout(() => {
-                    refundModal.hide();
-                    successToast.show();
-                    // Refresh results
-                    searchInput.trigger('input');
-                }, 800);
+                $.ajax({
+                    url: `/admin/support/refund/${id}`,
+                    method: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        refundamount: $('#refundRefundAmount').val(),
+                        refundmethod: $('#refundMethod').val(),
+                        refundreason: $('#refundReason').val(),
+                        refundnotes: $('#refundNotes').val(),
+                    },
+                    success: function(res) {
+                        if (res.status === 'success') {
+                            rescheduleModal.hide();
+                            successToast.show();
+                            searchInput.trigger('input');
+                        }
+                    },
+                    error: function(err) {
+                        alert('Error: ' + err.responseJSON.message);
+                    }
+                });
             });
             
             // Open Email Modal
@@ -1906,6 +2134,55 @@
                     emailModal.hide();
                     successToast.show();
                 }, 800);
+            });
+            
+            $('#saveNewBookingBtn').click(function() {
+                const form = $('#addBookingForm');
+                
+                
+                if (form[0].checkValidity()) {
+                    const formData = form.serializeArray();
+                    formData.push({name: '_token', value: "{{ csrf_token() }}"});
+                    
+                   
+                    $(this).prop('disabled', true).text('Saving...');
+                    
+                    $.ajax({
+                        url: "{{ route('support.bookings.store') }}",
+                        method: "POST",
+                        data: formData,
+                        success: function(response) {
+                            $('#saveNewBookingBtn').prop('disabled', false).text('Save Booking');
+                            if (response.success) {
+                                addBookingModal.hide();
+                                successToast.show();
+                                searchInput.trigger('input');
+                                form[0].reset();
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message || 'Failed to create booking. Please contact support',
+                                });
+                            }
+                        },
+                        error: function(xhr) {
+                            $('#saveNewBookingBtn').prop('disabled', false).text('Save Booking');
+                            let errorMessage = 'An error occurred while saving the booking';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: errorMessage,
+                            });
+                        }
+                    });
+                } else {
+                    // Manually trigger HTML5 validation
+                    form[0].reportValidity();
+                }
             });
         });
     </script>

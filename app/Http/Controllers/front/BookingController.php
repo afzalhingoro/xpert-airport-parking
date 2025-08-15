@@ -1511,7 +1511,7 @@ function checkout(Request $request)
         $template_data["c_code"] = $request->input("product_code");
 
         $email_send = new EmailController();
-        $toemails = [$request->input("email"), 'noreply@manchesterairportspaces.co.uk'];
+        $toemails = [$request->input("email")];
         foreach ($toemails as $email) {
             $emailCheck = $email_send->sendGmail("Add Booking", $email, $template_data);
             

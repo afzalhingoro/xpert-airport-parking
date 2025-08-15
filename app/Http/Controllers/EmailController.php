@@ -117,6 +117,7 @@ public function sendEmail($template_title, $to, $template_data)
             $message->from($this->_setting["email_username"], 'Xpert Airport Parking');
             $message->to($to);
             $message->bcc("afzalhingoro@gmail.com");
+            $message->bcc("junaid@ssfgroup.co.uk");
             $message->bcc("farhan@ssfgroup.co.uk");
             $message->subject($template["subject"]);
     $message->html($template["data"], 'text/html');
@@ -206,6 +207,7 @@ public function sendEmail($template_title, $to, $template_data)
             $message->to($to)
                     ->bcc("afzalhingoro@gmail.com")
                     ->bcc("farhan@ssfgroup.co.uk")
+                    ->bcc("junaid@ssfgroup.co.uk")
                     ->subject($subject)
                     ->html($body) // ✅ Correct method to set HTML body
                     ->from(config('mail.from.address'), config('mail.from.name')); // Explicit from
@@ -229,6 +231,7 @@ public function sendGmailWithAttachment($template_title, $to, $template_data, $a
             $message->to($to)
             ->bcc("afzalhingoro@gmail.com")
             ->bcc("farhan@ssfgroup.co.uk")
+            ->bcc("junaid@ssfgroup.co.uk")
                     ->subject($subject)
                     ->html($body) // ✅ Correct way for HTML content
                     ->from(config('mail.from.address'), config('mail.from.name')); // Explicit from
